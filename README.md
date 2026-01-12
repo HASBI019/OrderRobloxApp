@@ -58,7 +58,7 @@ Project ini dibangun menggunakan:
 
 1.  **Clone Repository**
     ```bash
-    git clone [https://github.com/username-kamu/JokiMap-Admin.git](https://github.com/username-kamu/JokiMap-Admin.git)
+    [git clone [https://github.com/username-kamu/JokiMap-Admin.git](https://github.com/username-kamu/JokiMap-Admin.git)](https://github.com/HASBI019/OrderRobloxApp.git)
     ```
 2.  **Buka di Android Studio**
     * File > Open > Pilih folder hasil clone.
