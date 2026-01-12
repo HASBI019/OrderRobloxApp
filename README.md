@@ -9,9 +9,9 @@
 ## 📱 Preview Aplikasi
 
 <p align="center">
-  <img src="LINK_GAMBAR_DASHBOARD.jpg" width="280" alt="Dashboard View"/>
+  <img src="https://github.com/HASBI019/OrderRobloxApp/blob/master/WhatsApp%20Image%202026-01-12%20at%2023.52.08.jpeg" width="280" alt="Dashboard View"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="LINK_GAMBAR_ADD_ORDER.jpg" width="280" alt="List View"/>
+  <img src="https://github.com/HASBI019/OrderRobloxApp/blob/master/WhatsApp%20Image%202026-01-13%20at%2000.11.23.jpeg" width="280" alt="List View"/>
 </p>
 
 ## 📖 Tentang Projek
@@ -58,7 +58,7 @@ Project ini dibangun menggunakan:
 
 1.  **Clone Repository**
     ```bash
-    [git clone [https://github.com/username-kamu/JokiMap-Admin.git](https://github.com/username-kamu/JokiMap-Admin.git)](https://github.com/HASBI019/OrderRobloxApp.git)
+    https://github.com/HASBI019/OrderRobloxApp.git
     ```
 2.  **Buka di Android Studio**
     * File > Open > Pilih folder hasil clone.
@@ -71,6 +71,6 @@ Project ini dibangun menggunakan:
 ---
 
 ## 👨‍💻 Author
-Dibuat dengan ❤️ dan Kopi oleh **[Nama Kamu]**.
+Dibuat dengan ❤️ rokok dan Kopi oleh **[MuhammadHasbiAs'ari]**.
 
 *Terbuka untuk kontribusi dan saran pengembangan!*
