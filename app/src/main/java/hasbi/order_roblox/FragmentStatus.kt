@@ -20,8 +20,8 @@ class FragmentStatus : Fragment() {
     private lateinit var rvData: RecyclerView
     private var statusFilter: String = "Antri"
 
-    // IP ADDRESS
-    private val ipAddress = "192.168.100.21"
+    // GANTI IP ADDRESS JADI URL CPANEL
+    private val serverUrl = "https://appocalypse.my.id/jokimap.php"
 
     companion object {
         fun newInstance(status: String): FragmentStatus {
@@ -47,7 +47,8 @@ class FragmentStatus : Fragment() {
     }
 
     private fun getDataOrder() {
-        val url = "http://$ipAddress/db_order/api.php?proc=getdata"
+        // GANTI URL KE ONLINE
+        val url = "$serverUrl?proc=getdata"
         val request = Request.Builder().url(url).build()
 
         OkHttpClient().newCall(request).enqueue(object : Callback {
@@ -65,12 +66,11 @@ class FragmentStatus : Fragment() {
                         val obj = jsonArray.getJSONObject(i)
                         val statusDB = obj.optString("status", "Antri")
 
+                        // Memfilter data berdasarkan tab (Antri/Proses/Selesai)
                         if (statusDB.equals(statusFilter, ignoreCase = true)) {
                             listOrder.add(
                                 ModelOrder(
-                                    // --- PERBAIKAN DISINI ---
-                                    obj.optString("id", "0"), // PAKE "id", BUKAN "id_order"
-
+                                    obj.optString("id", "0"),
                                     obj.optString("nama_klien", "Tanpa Nama"),
                                     obj.optString("akun_roblox", "-"),
                                     obj.optString("password_roblox", "-"),
@@ -87,7 +87,6 @@ class FragmentStatus : Fragment() {
                         val adapter = AdapterOrder(listOrder,
                             onEdit = { order ->
                                 val intent = Intent(context, InputActivity::class.java)
-                                // Kirim ID yang benar ke halaman edit
                                 intent.putExtra("ID", order.id)
                                 intent.putExtra("NAMA", order.nama_klien)
                                 intent.putExtra("AKUN", order.akun_roblox)
@@ -103,7 +102,8 @@ class FragmentStatus : Fragment() {
                             }
                         )
                         rvData.adapter = adapter
-                        (activity as? MainActivity)?.getDataCount()
+                        // Panggil update stats di MainActivity agar angka dashboard berubah
+                        (activity as? MainActivity)?.updateDashboardStats()
                     }
                 } catch (e: Exception) { e.printStackTrace() }
             }
@@ -113,8 +113,7 @@ class FragmentStatus : Fragment() {
     private fun confirmDelete(order: ModelOrder) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Hapus?")
-        // Menampilkan ID di pesan biar yakin ID-nya bukan 0 lagi
-        builder.setMessage("Yakin hapus ${order.nama_klien} (ID: ${order.id})?")
+        builder.setMessage("Yakin hapus ${order.nama_klien}?")
 
         builder.setPositiveButton("Hapus") { _, _ ->
             deleteDataAPI(order.id)
@@ -124,8 +123,8 @@ class FragmentStatus : Fragment() {
     }
 
     private fun deleteDataAPI(idOrder: String) {
-        // Pastikan endpoint delete benar
-        val url = "http://$ipAddress/db_order/api.php?proc=delete&id=$idOrder"
+        // GANTI URL KE ONLINE & SESUAIKAN proc=del (sesuai di PHP)
+        val url = "$serverUrl?proc=del&id=$idOrder"
 
         OkHttpClient().newCall(Request.Builder().url(url).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
@@ -133,7 +132,7 @@ class FragmentStatus : Fragment() {
             override fun onResponse(call: Call, response: Response) {
                 activity?.runOnUiThread {
                     Toast.makeText(context, "Terhapus!", Toast.LENGTH_SHORT).show()
-                    getDataOrder()
+                    getDataOrder() // Refresh list setelah hapus
                 }
             }
         })

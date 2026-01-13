@@ -15,11 +15,14 @@ class InputActivity : AppCompatActivity() {
     lateinit var etPass: EditText
     lateinit var etMount: EditText
     lateinit var etRequest: EditText
-    lateinit var etTanggal: EditText // Ini yang buat Kalender
+    lateinit var etTanggal: EditText
     lateinit var spStatus: Spinner
     lateinit var btnSimpan: Button
 
     var idData: String? = null
+
+    // URL SERVER CPANEL
+    private val serverUrl = "https://appocalypse.my.id/jokimap.php"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +39,14 @@ class InputActivity : AppCompatActivity() {
         btnSimpan = findViewById(R.id.btnSimpan)
 
         // 2. Setup Kalender (DatePicker)
-        // Saat kolom tanggal diklik, jalankan fungsi ini:
         etTanggal.setOnClickListener {
             val kalender = Calendar.getInstance()
             val tahun = kalender.get(Calendar.YEAR)
             val bulan = kalender.get(Calendar.MONTH)
             val hari = kalender.get(Calendar.DAY_OF_MONTH)
 
-            // Munculkan Popup Kalender
             val datePicker = DatePickerDialog(this,
                 { _, year, month, dayOfMonth ->
-                    // Format tanggal jadi: 2026-01-09 (sesuai format database MySQL)
-                    // Ingat: Bulan di Android mulai dari 0, jadi harus +1
                     val bulanFix = month + 1
                     val tanggalString = "$year-$bulanFix-$dayOfMonth"
                     etTanggal.setText(tanggalString)
@@ -108,11 +107,11 @@ class InputActivity : AppCompatActivity() {
             .add("tanggal_order", tgl)
             .add("status", status)
 
-        // Pastikan IP dan Folder Benar
-        var url = "http://192.168.100.21/db_order/api.php?proc=add"
+        // GUNAKAN URL ONLINE
+        var url = "$serverUrl?proc=add"
 
         if (idData != null) {
-            url = "http://192.168.100.21/db_order/api.php?proc=edit"
+            url = "$serverUrl?proc=edit"
             formBuilder.add("id", idData!!)
         }
 
@@ -134,7 +133,7 @@ class InputActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (response.isSuccessful) {
                         Toast.makeText(applicationContext, "Sukses: $responseText", Toast.LENGTH_SHORT).show()
-                        finish()
+                        finish() // Balik ke MainActivity
                     } else {
                         Toast.makeText(applicationContext, "Error Server: ${response.code}", Toast.LENGTH_LONG).show()
                     }

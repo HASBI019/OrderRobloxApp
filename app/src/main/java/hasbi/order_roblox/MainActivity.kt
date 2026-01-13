@@ -9,13 +9,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import okhttp3.*
-import org.json.JSONObject
+import org.json.JSONArray
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    // IP SERVER (Cek lagi, jangan sampai salah!)
-    private val ipAddress = "192.168.100.21"
+    // URL SERVER CPANEL (Ganti IP Lokal ke Domain Online)
+    private val serverUrl = "https://appocalypse.my.id/jokimap.php"
 
     lateinit var tvTotal: TextView
     lateinit var tvAntri: TextView
@@ -40,11 +40,11 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(this)
         viewPager.adapter = adapter
 
-        // Supaya pas geser tab, datanya refresh
+        // Supaya pas geser tab atau balik ke home, data refresh
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                getDataCount() // Update angka setiap ganti tab
+                updateDashboardStats()
             }
         })
 
@@ -66,12 +66,13 @@ class MainActivity : AppCompatActivity() {
     // Biar pas balik dari halaman Input, angka langsung update
     override fun onResume() {
         super.onResume()
-        getDataCount()
+        updateDashboardStats()
     }
 
-    // --- FUNGSI AMBIL ANGKA DARI SERVER ---
-    fun getDataCount() {
-        val url = "http://$ipAddress/db_order/api.php?proc=getcount"
+    // --- FUNGSI AMBIL DATA & HITUNG STATISTIK DARI SERVER ---
+    fun updateDashboardStats() {
+        // Mengambil data menggunakan proc=getdata sesuai modul
+        val url = "$serverUrl?proc=getdata"
         val request = Request.Builder().url(url).build()
 
         OkHttpClient().newCall(request).enqueue(object : Callback {
@@ -83,13 +84,30 @@ class MainActivity : AppCompatActivity() {
                 val responseText = response.body?.string()
                 if (responseText != null) {
                     try {
-                        val jsonObject = JSONObject(responseText)
+                        val jsonArray = JSONArray(responseText)
+
+                        // Inisialisasi hitungan
+                        var total = jsonArray.length()
+                        var antri = 0
+                        var proses = 0
+                        var selesai = 0
+
+                        // Looping data untuk menghitung status
+                        for (i in 0 until jsonArray.length()) {
+                            val item = jsonArray.getJSONObject(i)
+                            val status = item.optString("status")
+
+                            if (status.equals("Antri", ignoreCase = true)) antri++
+                            if (status.equals("Proses", ignoreCase = true)) proses++
+                            if (status.equals("Selesai", ignoreCase = true)) selesai++
+                        }
+
                         runOnUiThread {
-                            // Update Angka di Layar
-                            tvTotal.text = jsonObject.optString("total", "0")
-                            tvAntri.text = jsonObject.optString("antri", "0")
-                            tvProses.text = jsonObject.optString("proses", "0")
-                            tvSelesai.text = jsonObject.optString("selesai", "0")
+                            // Update Angka di Layar Dashboard
+                            tvTotal.text = total.toString()
+                            tvAntri.text = antri.toString()
+                            tvProses.text = proses.toString()
+                            tvSelesai.text = selesai.toString()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
